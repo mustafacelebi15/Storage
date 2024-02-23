@@ -1,10 +1,61 @@
-import React, {useEffect} from 'react';
-import { View, Text } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { View, Text, Alert, Linking } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen'
+import NetInfo from '@react-native-community/netinfo';
 
 import Button from '../../Components/Button';
 
 const WelcomeScreen = ({ navigation }) => {
+
+  const [isConnected, setIsConnected] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const checkInternetConnection = async () => {
+        const netInfoState = await NetInfo.fetch();
+        setIsConnected(netInfoState.isConnected);
+      };
+
+      await checkInternetConnection();
+
+      setTimeout(() => {
+        if (isConnected === true) {
+          console.log(isConnected);
+          SplashScreen.hide();
+        } else if(isConnected === false){
+          console.log('Bağlantı:', isConnected);
+          showNoInternetAlert();
+        }
+      }, 2000);
+    };
+
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    fetchData();
+
+    return () => {
+      unsubscribe();
+    };
+  }, [isConnected]);
+
+  const openSettings = () => {
+    Linking.openSettings();
+  };
+
+  const showNoInternetAlert = () => {
+    Alert.alert(
+      'Bağlantı Hatası',
+      'İnternet bağlantınızı kontrol etmek için ayarlara gidin',
+      [
+        {
+          text: 'Tamam',
+          onPress: openSettings,
+        },
+      ]
+    );
+  };
   useEffect(() => {
     const checkLogin = async () => {
       try {
