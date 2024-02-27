@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import I18n from '../../android/app/src/lang/_i18n';
 
 import Button from '../../Components/Button';
 
@@ -30,7 +31,9 @@ const Anasayfa = ({ navigation }) => {
   };
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{fontSize:50, color:'black'}}>Hoşgeldin {storedUsername}</Text>
+      <Text style={{fontSize:50, color:'black'}}>{I18n.t('welcome')}</Text>
+      <Text style={{fontSize:50, color:'black'}}>{storedUsername}</Text>
+      <Text style={{fontSize:50, color:'black'}}>{I18n.t('hello')}</Text>
       <Button title={"Çıkış Yap"} onPress={removeLoginInfo}/>
     </View>
   );
